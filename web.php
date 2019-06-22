@@ -11,13 +11,17 @@
 |
 */
 
-Auth::routes();
+//Auth::routes();
 //
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
-Route::get('/', function()
-{
-  return view('home');
-});
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('/projects', 'ProjectController@index');
+Route::get('/partners', 'PartnersController@index');
+
+// Route::get('/users/{id}/{name}', function($id,$name)
+// {
+//   return 'This is user ' .$name. ' with id of ' .$id;
+// });
