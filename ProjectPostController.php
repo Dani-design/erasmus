@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\ProjectPost;
 class ProjectPostController extends Controller
 {
     /**
@@ -13,7 +13,8 @@ class ProjectPostController extends Controller
      */
     public function index()
     {
-        //
+      $projectpost= ProjectPost::orderBy('created_at','desc')->get();
+        return view('projectposts') -> with('projectpost', $projectpost);
     }
 
     /**
@@ -23,7 +24,7 @@ class ProjectPostController extends Controller
      */
     public function create()
     {
-        //
+        return view('projectpostscreate');
     }
 
     /**
@@ -34,7 +35,16 @@ class ProjectPostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,
+          ['title' => 'required',
+          'description'=>'required'
+        ]);
+        //create post
+        $post = new ProjectPost;
+        $post->title = $request->input('title');
+        $post->description = $request->input('description');
+        $post->save();
+        return redirect('/projectposts')->with ('success', 'Post created');
     }
 
     /**
@@ -45,7 +55,8 @@ class ProjectPostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post= ProjectPost::find($id);
+        return view ('projectpostshow')->with('post',$post);
     }
 
     /**
