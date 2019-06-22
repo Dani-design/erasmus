@@ -6,9 +6,12 @@
         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/projects">Projects</a>
+        <a class="nav-link" href="/projectposts">Projects</a>
       </li>
       <a class="nav-link" href="/partners">Partners</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/projectposts/create"> Crate a project </a>
     </li>
     </ul>
 
