@@ -11,15 +11,17 @@
 |
 */
 
-//Auth::routes();
+Auth::routes();
 //
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
-Route::get('/', 'HomeController@index')->name('home');
-Route::get('/projects', 'ProjectController@index');
+Route::get('/home', 'HomeController@index')->name('LoggedIn');
+Route::get('/', 'FirstPageController@index');
 Route::get('/partners', 'PartnersController@index');
+Route::resource('projectposts','ProjectPostController');
+Route::resource('userprofile','UserProfilecontroller');
+
 
 // Route::get('/users/{id}/{name}', function($id,$name)
 // {

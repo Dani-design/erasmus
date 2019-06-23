@@ -10,7 +10,7 @@
         {{$ppost->title}}
       </a>
       </h3>
-    <small> Written on {{$ppost->created_at}}</small>
+    <small> Written on {{$ppost->created_at}} by {{$ppost->user->name}}</small>
   </div>
   @endforeach
   @else
