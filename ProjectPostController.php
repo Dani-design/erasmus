@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\ProjectPost;
+use App\User;
 class ProjectPostController extends Controller
 {
 
@@ -15,8 +17,8 @@ class ProjectPostController extends Controller
   public function __construct()
   {
       $this->middleware('auth', ['except'=>['index','show','create','store']]);
-      $this->middleware('organization', ['only'=>['create','store']]);
-      $this->middleware('admin', ['only'=>['create','store']]);
+      $this->middleware('multiple' , ['only'=>['create','store']]);
+
   }
 
     /**
@@ -37,6 +39,7 @@ class ProjectPostController extends Controller
      */
     public function create()
     {
+
         return view('projectpostscreate');
     }
 
@@ -50,13 +53,25 @@ class ProjectPostController extends Controller
     {
         $this->validate($request,
           ['title' => 'required',
-          'description'=>'required'
+          'description'=>'required',
+          'cover_image'=>'image|nullable|max:1999'
         ]);
+        //handle file
+        if($request->hasFile('cover_image')){
+          $filenameWithExt = $request -> file('cover_image')->getClientOriginalName();
+          $filename =pathinfo($filenameWithExt, PATHINFO_FILENAME);
+          $extension = $request->file('cover_image')->getClientOriginalExtension();
+          $fileNameToStore=$filename.'_'.time().'.'.$extension;
+          $path = $request->file('cover_image')->storeAs('public/cover_images',$fileNameToStore);
+        }else {
+          $fileNameToStore= 'noimage.jpg';
+        }
         //create post
         $post = new ProjectPost;
         $post->title = $request->input('title');
         $post->description = $request->input('description');
         $post->user_id= auth()->user()->id;
+        $post->cover_image = $fileNameToStore;
         $post->save();
         return redirect('/projectposts')->with ('success', 'Post created');
     }
@@ -101,11 +116,23 @@ class ProjectPostController extends Controller
     {
       $this->validate($request,
         ['title' => 'required',
-        'description'=>'required'
+        'description'=>'required',
+        'cover_image'=>'image|nullable|max:1999'
       ]);
+      if($request->hasFile('cover_image')){
+        $filenameWithExt = $request -> file('cover_image')->getClientOriginalName();
+        $filename =pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $request->file('cover_image')->getClientOriginalExtension();
+        $fileNameToStore=$filename.'_'.time().'.'.$extension;
+        $path = $request->file('cover_image')->storeAs('public/cover_images',$fileNameToStore);
+      }
       $post =  ProjectPost::find($id);
       $post->title = $request->input('title');
       $post->description = $request->input('description');
+      if($request->hasFile('cover_image'))
+      {$post->cover_image = $fileNameToStore;
+}
+
       $post->save();
       return redirect('projectposts')->with ('success', 'Post updated');
     }
@@ -121,6 +148,10 @@ class ProjectPostController extends Controller
         $post = ProjectPost::find($id);
         if(auth()->user()->id!==$post->user_id){
           return redirect('/projectposts')->with('erorr','You cannot access this page');
+        }
+        if ($post->cover_image !='noimage.jpg')
+        {
+          Storage::delete('public/cover_images/'.$post->cover_image);
         }
         $post->delete();
         return redirect('projectposts')->with('success','Post Deleted');

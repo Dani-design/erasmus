@@ -18,8 +18,7 @@ class UserProfilecontroller extends Controller
     public function index()
     {
 
-       $id=auth()->user()->id;
-       return redirect()->action('UserProfilecontroller@show', $id);
+
     }
 
     /**
@@ -51,10 +50,9 @@ class UserProfilecontroller extends Controller
      */
     public function show($id)
     {
-      $user_id=auth()->user()->id;
-      $user =User::find($user_id);
+      $user =User::find($id);
         return view ('userprofile')->with('user',$user)->with('posts', $user->projectposts);
-    }
+     }
 
     /**
      * Show the form for editing the specified resource.
@@ -64,7 +62,11 @@ class UserProfilecontroller extends Controller
      */
     public function edit($id)
     {
-        //
+      $user=User::find($id);
+
+      //check for correct user
+
+      return view('userprofileedit')->with ('user',$user);
     }
 
     /**
@@ -76,7 +78,25 @@ class UserProfilecontroller extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+      $this->validate($request,
+        ['cover_image'=>'image|nullable|max:1999'
+      ]);
+      if($request->hasFile('cover_image')){
+        $filenameWithExt = $request -> file('cover_image')->getClientOriginalName();
+        $filename =pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $request->file('cover_image')->getClientOriginalExtension();
+        $fileNameToStore=$filename.'_'.time().'.'.$extension;
+        $path = $request->file('cover_image')->storeAs('public/cover_images',$fileNameToStore);
+      }
+      $user =  User::find($id);
+      $user->description = $request->input('description');
+      if($request->hasFile('cover_image'))
+      {$user->cover_image = $fileNameToStore;
+}
+      $user->save();
+      return redirect()->action('UserProfilecontroller@show', array($user->id))->with('success','Profile updated');
+
+
     }
 
     /**
@@ -87,6 +107,13 @@ class UserProfilecontroller extends Controller
      */
     public function destroy($id)
     {
-        //
+      $user = User::find($id);
+
+      if ($user->cover_image !='noimage.jpg')
+      {
+        Storage::delete('public/cover_images/'.$user->cover_image);
+      }
+      $user->delete();
+
     }
 }

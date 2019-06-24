@@ -21,6 +21,11 @@ Route::get('/', 'FirstPageController@index');
 Route::get('/partners', 'PartnersController@index');
 Route::resource('projectposts','ProjectPostController');
 Route::resource('userprofile','UserProfilecontroller');
+Route::get('locale/{locale}', function ($locale){
+    Session::put('locale', $locale);
+    return redirect()->back();
+});
+
 
 
 // Route::get('/users/{id}/{name}', function($id,$name)

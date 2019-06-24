@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,12 +24,14 @@
 
 </head>
 <body>
-    <div id="app">
+
+    <div >
       <div class="container">
-      <div class="jumbotron text-center">
-      <div class="container" >
-        <h1> Welcome</h1>
-        <p class="lead"> hello there </p>
+      <div class="jumbotron text-center" id= "centrs">
+      <div class="container" id="virsraksts" >
+
+        <h1><b> {{__('home.welcome')}}</b></h1>
+        <p class="lead"><b> {{__('home.welcome2')}}</b></p>
       </div>
     </div>
   </div>
